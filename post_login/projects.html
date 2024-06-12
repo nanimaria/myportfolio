@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="script.js"></script>
+    <title>Project Information</title>
+</head>
+<body>
+
+    <div id="projectInfo">
+        <h1 id="projectName">Project Name: </h1>
+        <img id="projectLogo" src="" alt="Project Logo">
+        <p id="projectLink">Project Link: </p>
+    </div>
+
+    <div id="inputForm">
+        <label for="projectNameInput">Project Name: </label>
+        <input type="text" id="projectNameInput">
+
+        <label for="projectLogoInput">Project Logo URL: </label>
+        <input type="text" id="projectLogoInput">
+
+        <label for="projectLinkInput">Project Link: </label>
+        <input type="text" id="projectLinkInput">
+
+        <button onclick="updateProjectInfo()">Update Project Info</button>
+    </div>
+
+    <!-- Add a table to display projects -->
+    <table id="projectsTable"></table>
+
+
+    <script>
+         // Function to update project info
+function updateProjectInfo() {
+    // Get values from input fields
+    var projectName = $('#projectNameInput').val();
+    var projectLogo = $('#projectLogoInput').val();
+    var projectLink = $('#projectLinkInput').val();
+
+    // Update content on the webpage
+    $('#projectName').text('Project Name: ' + projectName);
+    $('#projectLogo').attr('src', projectLogo);
+    $('#projectLink').html('Project Link: <a href="' + projectLink + '" target="_blank">' + projectLink + '</a>');
+
+    // Save data to local storage
+    saveDataToLocalStorage(projectName, projectLogo, projectLink);
+}
+
+// Function to save data to local storage
+function saveDataToLocalStorage(projectName, projectLogo, projectLink) {
+    // Get existing projects from local storage or initialize an empty array
+    var existingProjects = JSON.parse(localStorage.getItem('projects')) || [];
+
+    // Add the new project to the array
+    existingProjects.push({
+        name: projectName,
+        logo: projectLogo,
+        link: projectLink
+    });
+
+    // Save the updated array back to local storage
+    localStorage.setItem('projects', JSON.stringify(existingProjects));
+
+    // Display the projects in a table
+    displayProjects(existingProjects);
+}
+
+// Function to display projects in a table
+function displayProjects(projects) {
+    var table = $('#projectsTable');
+    table.empty();
+
+    // Create table header
+    var header = $('<tr>').append($('<th>').text('Project Name'), $('<th>').text('Project Logo'), $('<th>').text('Project Link'));
+    table.append(header);
+
+    // Populate table with project data
+    projects.forEach(function (project) {
+        var row = $('<tr>').append($('<td>').text(project.name), $('<td>').html('<img src="' + project.logo + '" alt="Project Logo" style="max-width: 50px; max-height: 50px;">'), $('<td>').html('<a href="' + project.link + '" target="_blank">' + project.link + '</a>'));
+        table.append(row);
+    });
+}
+
+// Load data from local storage on page load
+$(document).ready(function() {
+    var existingProjects = JSON.parse(localStorage.getItem('projects')) || [];
+    displayProjects(existingProjects);
+});
+
+    </script>
+</body>
+</html>
